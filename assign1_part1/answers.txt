@@ -1,0 +1,14 @@
+1-Pointers
+----------
+
+1) This code is incorrect because the pointer temp was not initialized before being used. The pointer temp is not initialized to an address of a char variable.
+
+2) A buffer overflow occurs because strings are terminated with a null character '\0'. So even though, the program name is 9 characters long you would need to declare a string with a length of 10 characters to account for the null character.
+
+3) This program crashes because the pointer buffer is initialized and when the strcpy function is called in the first argument buffer is not referenced properly. For the program not to crash, it should be strcpy (&buffer, "World")
+
+4) This C snippet is correct. A simpler expression for &b[0] is b[0] because arrays already act as a pointer, so the & sign is unneeded. 
+
+5) Running this C program will result in a segmentation fault. This happens because we are not referencing argv properly.
+
+6) In the function "myfunc" it is suppose to return a pointer. However, the function returns a char and not a pointer.
