@@ -1,7 +1,11 @@
+SMP0: Counting Words
+====================
+
+
 1-Pointers
 ----------
 
-1) This code is incorrect because the pointer temp was not initialized before being used. The pointer temp is not initialized to an address of a char variable.
+1) This code is incorrect because the char pointer temp was not initialized before being used. Memory was not allocated to the pointer before using it, and this can be done by using the malloc() function.
 
 2) A buffer overflow occurs because strings are terminated with a null character '\0'. So even though, the program name is 9 characters long you would need to declare a string with a length of 10 characters to account for the null character.
 
@@ -12,6 +16,8 @@
 5) Running this C program will result in a segmentation fault. This happens because we are not referencing argv properly.
 
 6) In the function "myfunc" it is suppose to return a pointer. However, the function returns a char and not a pointer.
+
+
 
 PART 2 - A SIMPLE SHELL
 -----------------------
