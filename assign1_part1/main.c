@@ -33,9 +33,9 @@ Expected output:
 typedef struct {
   char *word;
   int counter;
-} WordCountEntry;
+} WordCountEntry; // WordCountEntry structure
 
-
+// compares the input to the words specified in the command-line argument
 int process_stream(WordCountEntry entries[], int entry_count)
 {
   short line_count = 0;
@@ -47,7 +47,7 @@ int process_stream(WordCountEntry entries[], int entry_count)
     /* Compare against each entry */
     int i = 0;
     while (i < entry_count) {
-      if (!strcmp(entries[i].word, buffer))
+      if (!strcmp(entries[i].word, buffer)) // A check to see if the inputted words is the same as the command-line argument words
         entries[i].counter++;
       i++;
     }
@@ -56,7 +56,7 @@ int process_stream(WordCountEntry entries[], int entry_count)
   return line_count;
 }
 
-
+// printing the results of comparing
 void print_result(WordCountEntry entries[], int entry_count)
 {
   printf("Result:\n");
@@ -72,11 +72,12 @@ void printHelp(const char *name)
 }
 
 
+/* MAIN FUNCTION */
 int main(int argc, char **argv)
 {
-  const char *prog_name = *argv;
+  const char *prog_name = *argv; // pointer for the program name
 
-  WordCountEntry entries[5];
+  WordCountEntry entries[5]; // Create a WordCountryEntry object
   int entryCount = 0;
 
   /* Entry point for the testrunner program */
@@ -88,7 +89,7 @@ int main(int argc, char **argv)
   while (*argv != NULL) {
     if (**argv == '-') {
 
-      switch ((*argv)[1]) {
+      switch ((*argv)[1]) { // To check if help option was selected
         case 'h':
           printHelp(prog_name);
         default:
@@ -96,26 +97,26 @@ int main(int argc, char **argv)
                  prog_name, *argv);
       }
     } else {
-      if (entryCount < LENGTH(entries)) {
+      if (entryCount < LENGTH(entries)) { // entering the entries into the WordCountEntry object
         entries[entryCount].word = *argv;
         entries[entryCount++].counter = 0;
       }
     }
     argv++;
   }
-  if (entryCount == 0) {
+  if (entryCount == 0) { // If there were no words as input
     printf("%s: Please supply at least one word. Use -h for help.\n",
            prog_name);
     return EXIT_FAILURE;
   }
-  if (entryCount == 1) {
+  if (entryCount == 1) { // if the # of inputs=1
     printf("Looking for a single word\n");
   } else {
     printf("Looking for %d words\n", entryCount);
   }
 
-  process_stream(entries, entryCount);
-  print_result(entries, entryCount);
+  process_stream(entries, entryCount); // compares the inputted words to the command-line argument words
+  print_result(entries, entryCount); // prints the results
 
   return EXIT_SUCCESS;
 }

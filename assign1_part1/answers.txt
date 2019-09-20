@@ -12,3 +12,26 @@
 5) Running this C program will result in a segmentation fault. This happens because we are not referencing argv properly.
 
 6) In the function "myfunc" it is suppose to return a pointer. However, the function returns a char and not a pointer.
+
+PART 2 - A SIMPLE SHELL
+-----------------------
+
+1) The command 'cd' modifies the current working directory which is a property that is unique to each process. Once you change the working directory for that specific directory, once you exit and return to the parent process the working directory will be what it originally was. You can implement an external program to chnage directories by using the chdir() which is a system call that is used to change the current working diretory. The problem with this type of implementation is that once you exit out of the child process, the parent process would still be in the original diretory it started from and not changed to the working directory that was specified in the child process.
+
+2) The sample shell implements 'cd' command by using the built-in function, chdir() which changes the current working directory of the process calling it. There is also a check to output an error message if the chdir() function call has failed.
+
+3) If the progam did not use the fork function, after a command is executed it exits the shell. This happens because the fork() command creates a new process everytime a command is executed, by making the pid_from_fork = 0 it shows that the new process was successfully created and if it encounters a 0 it runs the imthechild function. 
+
+4) The return value of fork() shows if the function call was successful. A negative value means the creation of the new child process was not successful. If a zero is returned, this is the value of that the child process is suppose to receive. Lastly, if a postive value is returned, the parent process receives this value which is the child process's unique ID. The sample shell does a check for the different possible return values to determine what the child process and what the parent process should do separately. 
+
+5) 
+
+6) It is possible to run multiple version of ./b.sh in the background, however the output is not what is expected. The output from running the multiple version of the script in the background is that they alternate outputing their echo command, until one of the ./b.sh in the background finishes. Then it returns back to the expected output.
+
+7) It is possbile to execute a second shell instance from our shell. The shell that receives the input is the second shell instance. Once you exit the second shell instance it returns to the original shell instance.
+
+8) While using CTRL-C while the countdown script is running, the script is stopped and the shell is exited. The same thing happens when the countdown script is running in the background.
+
+9) A shell can kill itself, and it results in the exit of that shell. A shell within a shell can kill the parent shell but doing so kills the child shell as well.
+
+10) When running the countdown script in the background and immediately exiting from the shell, the script continues to run as the output was still continued to be shown. This is further confirmed by using the 'ps' command to see that the ./b.sh script was still running
