@@ -13,24 +13,36 @@ SMP0: Counting Words
 
 4) This C snippet is correct. A simpler expression for &b[0] is b[0] because arrays already act as a pointer, so the & sign is unneeded. 
 
-5) Running this C program will result in a segmentation fault. This happens because we are not referencing argv properly.
+5) Running this program will output ./a.out ogram1 -n5 because the first element in argv is the filename hence it returns ./a.out. 'ogram1' is outputted because the +2 tells the program to start from the 2nd position within that string. 
 
-6) In the function "myfunc" it is suppose to return a pointer. However, the function returns a char and not a pointer.
+6) In the function "myfunc" it is suppose to return a pointer. However, the function returns a char and not a pointer and it results in a segmentation fault.
 
 
+2-Debugging
+------------
+
+1) The strcmp() function because it returns 0 if both of the strings are identical. By putting an exclamation operator, it is doing a check to see if it returns. Other possible return values are negative and positive integers which indicate that there are characters that are unmatched.
+
+2) The 'LENGTH' marco returns the length of an array because we defined the marco to take the total size of the given array and divide it by the size of the array element. However, this marco only works with static arrays and not dynamically allocated arrays because sizeof does not work on dynamic allcations. A pointer only points to the location in memory but it has no way of knowning what the supposed size of what it is pointing to.
+
+3) For example when the '-h' option is used, it correctly prints the 'printhelp' statement however, instead of stopping the program or asking the user to try again and enter a valid entry, the program continues to run and checks for a word which is incorrect. This can be fixed by returning 'EXIT_FAILURE' at the end of each switch case. 
+
+4) The entrycount is never zero because the number of arguments in command line will always be greater than one due to the fact that the filename is always the first argument. The argument parsing resulted in an error because it did account always being greater than 1.
+
+5) Entries is a pointer and by using '[]' to access the element at a specific position it is dereferencing the pointer at the given element and because of that we can no longer use the arrow operator. Therefore, the solution is to use '[]' instead of the arrow operator to properly dereference the data at the given position. I implemeneted it by using a for loop. 
 
 PART 2 - A SIMPLE SHELL
 -----------------------
 
-1) The command 'cd' modifies the current working directory which is a property that is unique to each process. Once you change the working directory for that specific directory, once you exit and return to the parent process the working directory will be what it originally was. You can implement an external program to chnage directories by using the chdir() which is a system call that is used to change the current working diretory. The problem with this type of implementation is that once you exit out of the child process, the parent process would still be in the original diretory it started from and not changed to the working directory that was specified in the child process.
+1) The command 'cd' modifies the current working directory which is a property that is unique to each process. Once you change the working directory for that specific directory, and once you exit and return to the parent process the working directory will be what it originally was. You can implement an external program to chnage directories by using the chdir() which is a system call that is used to change the current working diretory. The problem with this type of implementation is that once you exit out of the child process, the parent process would still be in the original diretory it started from and not changed to the working directory that was specified in the child process.
 
-2) The sample shell implements 'cd' command by using the built-in function, chdir() which changes the current working directory of the process calling it. There is also a check to output an error message if the chdir() function call has failed.
+2) The sample shell implements 'cd' command by using the built-in function, chdir() which changes the current working directory of the process calling it. 
 
 3) If the progam did not use the fork function, after a command is executed it exits the shell. This happens because the fork() command creates a new process everytime a command is executed, by making the pid_from_fork = 0 it shows that the new process was successfully created and if it encounters a 0 it runs the imthechild function. 
 
 4) The return value of fork() shows if the function call was successful. A negative value means the creation of the new child process was not successful. If a zero is returned, this is the value of that the child process is suppose to receive. Lastly, if a postive value is returned, the parent process receives this value which is the child process's unique ID. The sample shell does a check for the different possible return values to determine what the child process and what the parent process should do separately. 
 
-5) 
+5) The 'cd' command does not run properly. By adding the check to see if fork() = 0 meaning that it is the child process chdir() will never run because the process is always the parent process and the fork return value will always be greater than 0. 
 
 6) It is possible to run multiple version of ./b.sh in the background, however the output is not what is expected. The output from running the multiple version of the script in the background is that they alternate outputing their echo command, until one of the ./b.sh in the background finishes. Then it returns back to the expected output.
 

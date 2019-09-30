@@ -120,7 +120,9 @@ int test_file_output(int argc, char **argv)
     freopen("/dev/null", "w", stdout);
     freopen("smp0.in", "r", stdin);
     quit_if(main(5, args) != EXIT_SUCCESS);
-    fcloseall();
+    fclose(stdin);
+    fclose(stdout);
+    fclose(stderr);
 
     quit_if((out = fopen("smp0.out", "r")) == NULL);
     for (i = 0; i < 5; i++) {

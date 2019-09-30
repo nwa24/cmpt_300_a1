@@ -29,7 +29,10 @@ Expected output:
 
 #define LENGTH(s) (sizeof(s) / sizeof(*s))
 
+FILE *output_file;
+
 /* Structures */
+
 typedef struct {
   char *word;
   int counter;
@@ -40,15 +43,33 @@ int process_stream(WordCountEntry entries[], int entry_count)
 {
   short line_count = 0;
   char buffer[30];
+  char *token_array[30];
 
-  while (gets(buffer)) {
+  while (fgets(buffer, sizeof(buffer), stdin)) {
     if (*buffer == '.')
       break;
     /* Compare against each entry */
     int i = 0;
+    buffer[strcspn(buffer, "\r\n")] = 0; // When using fgets it has a newline (\n) character at the end. This is done to remove it
+
+    /* Getting all the tokens in a command line and inserting it into an array for comparison later*/
+    int j = 0;
+    int count_token = 0; // counting the number of words in one line
+    char *token = strtok (buffer, " "); // first token
+
+    while (token != NULL) {
+      count_token++;
+      token_array[j++] = token;
+      token = strtok(NULL, " ");
+    }
+
+    /* Comparing each token against each entry */
     while (i < entry_count) {
-      if (!strcmp(entries[i].word, buffer)) // A check to see if the inputted words is the same as the command-line argument words
-        entries[i].counter++;
+      for (int k = 0; k < count_token; k++) {
+        if (!strcmp(entries[i].word, token_array[k])) {
+          entries[i].counter++;
+        }
+      }
       i++;
     }
     line_count++;
@@ -60,15 +81,16 @@ int process_stream(WordCountEntry entries[], int entry_count)
 void print_result(WordCountEntry entries[], int entry_count)
 {
   printf("Result:\n");
-  while (entry_count-- > 0) {
-    printf("%s:%d\n", entries->word, entries->counter);
+
+  // Fixed code for printing results
+  for (int j = 1; j < entry_count; j++) {
+    printf("%s:%d\n", entries[j].word, entries[j].counter);
   }
 }
 
-
 void printHelp(const char *name)
 {
-  printf("usage: %s [-h] <word1> ... <wordN>\n", name);
+  fprintf(stderr, "usage: %s [-h] <word1> ... <wordN>\n", name);
 }
 
 
@@ -77,7 +99,7 @@ int main(int argc, char **argv)
 {
   const char *prog_name = *argv; // pointer for the program name
 
-  WordCountEntry entries[5]; // Create a WordCountryEntry object
+  WordCountEntry *entries = malloc(sizeof(WordCountEntry) * argc);
   int entryCount = 0;
 
   /* Entry point for the testrunner program */
@@ -89,34 +111,48 @@ int main(int argc, char **argv)
   while (*argv != NULL) {
     if (**argv == '-') {
 
-      switch ((*argv)[1]) { // To check if help option was selected
+      switch ((*argv)[1]) { // Checks the second argument since the first argument is always the filename
         case 'h':
           printHelp(prog_name);
+          return EXIT_FAILURE; // Added: To exit out of the program completely
+
+        case 'f':
+        {
+        
+          char *filename = (strstr (*argv, "f"))+1;
+          output_file = freopen(filename, "w", stdout);
+          break;
+        }
         default:
-          printf("%s: Invalid option %s. Use -h for help.\n",
+          fprintf(stderr, "%s: Invalid option %s. Use -h for help.\n",
                  prog_name, *argv);
+          fprintf(stderr, "%s: Please supply at least one word. Use -h for help.\n",
+                 prog_name );  
+          return EXIT_FAILURE; // Added: To exit out of the program completely
       }
     } else {
-      if (entryCount < LENGTH(entries)) { // entering the entries into the WordCountEntry object
+      if (entryCount < argc) { // entering the entries into the WordCountEntry object
         entries[entryCount].word = *argv;
         entries[entryCount++].counter = 0;
       }
     }
     argv++;
   }
-  if (entryCount == 0) { // If there were no words as input
-    printf("%s: Please supply at least one word. Use -h for help.\n",
-           prog_name);
+  if (entryCount == 1) { // If there were no words as input
+    fprintf(stderr, "%s: Please supply at least one word. Use -h for help.\n",
+           prog_name );
     return EXIT_FAILURE;
   }
-  if (entryCount == 1) { // if the # of inputs=1
+  if (entryCount == 2) { // if the # of inputs=1
     printf("Looking for a single word\n");
   } else {
-    printf("Looking for %d words\n", entryCount);
+    printf("Looking for %d words\n", (entryCount-1));
   }
 
   process_stream(entries, entryCount); // compares the inputted words to the command-line argument words
-  print_result(entries, entryCount); // prints the results
+  print_result(entries, entryCount);
+  fclose(output_file);
+  
 
   return EXIT_SUCCESS;
 }
